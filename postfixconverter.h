@@ -3,6 +3,6 @@
 
 #include <string>
 
-std::string addExplicitConcat(std::string regexStr);
+std::queue<char> convertToPostfix(std::string regexStr);
 
 #endif
