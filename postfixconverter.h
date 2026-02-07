@@ -1,8 +1,6 @@
-#ifndef postfixconverter_h
-#define postfixconverter_h
+#pragma once
 
+#include <queue>
 #include <string>
 
 std::queue<char> convertToPostfix(std::string regexStr);
-
-#endif
