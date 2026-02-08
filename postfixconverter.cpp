@@ -22,7 +22,7 @@ bool higherEqualPrecedence(char op, char otherOp) {
     }
 }
 
-std::queue<char> RegexAsQueue(std::string regexStr) {
+std::queue<char> regexAsQueue(std::string regexStr) {
     std::queue<char> regexQueue;
     for(std::string::size_type i = 0; i < regexStr.size(); i++) {
         char symbol = regexStr[i];
@@ -40,7 +40,7 @@ std::queue<char> RegexAsQueue(std::string regexStr) {
 }
 
 std::queue<char> convertToPostfix(std::string regexStr) {
-    std::queue<char> regexQueue = RegexAsQueue(regexStr);
+    std::queue<char> regexQueue = regexAsQueue(regexStr);
     
     //Shunting-Yard algorithm
     std::queue<char> postfixQueue;

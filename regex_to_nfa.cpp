@@ -60,15 +60,6 @@ NFA convertToNFA(std::queue<char> regexQueue) {
     return nfaStack.top();
 }
 
-transition_function_t merge(transition_function_t func1, const transition_function_t func2) {
-
-    for(auto e : func2) {
-        func1[e.first] = e.second;
-    }
-
-    return func1;
-}
-
 NFA createUnitNFA(char symbol) {
     int32_t initialState = state_counter++;
     int32_t acceptingState = state_counter++;

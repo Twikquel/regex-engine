@@ -2,6 +2,7 @@
 .vscode
 out/
 main
+test
 
 # Prerequisites
 *.d

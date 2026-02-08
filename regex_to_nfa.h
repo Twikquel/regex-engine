@@ -3,8 +3,6 @@
 #include "nfa.h"
 #include <queue>
 
-transition_function_t merge(transition_function_t func1, const transition_function_t func2);
-
 NFA convertToNFA(std::queue<char> regex);
 
 NFA createUnitNFA(char symbol);

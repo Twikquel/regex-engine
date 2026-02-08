@@ -1,3 +1,4 @@
+#include <iostream>
 #include "postfixconverter.h"
 #include "regex_to_nfa.h"
 

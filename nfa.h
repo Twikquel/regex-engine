@@ -1,10 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
-#include <tuple>
-#include <vector>
 #include <cstdint>
 
 struct state_input_pair {
@@ -24,7 +21,7 @@ struct hasher {
     }
 };
 
-typedef std::unordered_map<state_input_pair, std::vector<int32_t>, hasher> transition_function_t;
+typedef std::unordered_map<state_input_pair, std::unordered_set<int32_t>, hasher> transition_function_t;
 
 struct NFA {
     int32_t initialState;
