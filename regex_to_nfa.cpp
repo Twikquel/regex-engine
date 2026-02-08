@@ -6,9 +6,17 @@
 
 int32_t state_counter = 0;
 
+void resetStateCounter() {
+    state_counter = 0;
+}
+
 NFA convertToNFA(std::queue<char> regexQueue) {
 
     std::stack<NFA> nfaStack;
+
+    if(regexQueue.empty()) {
+        return createEmptyNFA();
+    }
 
     while(!regexQueue.empty()) {
         char symbol = regexQueue.front();

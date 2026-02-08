@@ -3,6 +3,8 @@
 #include "nfa.h"
 #include <queue>
 
+void resetStateCounter();
+
 NFA convertToNFA(std::queue<char> regex);
 
 NFA createUnitNFA(char symbol);
