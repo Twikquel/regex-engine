@@ -1,9 +1,9 @@
 #pragma once
 
-#include "nfa.h"
 #include <queue>
+#include "automatons.h"
 
-void resetStateCounter();
+void reunordered_setNFAStateCounter();
 
 NFA convertToNFA(std::queue<char> regex);
 

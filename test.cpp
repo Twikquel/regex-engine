@@ -68,7 +68,7 @@ void test_postfix_conversion() {
 }
 
 void test_empty_nfa() {
-    resetStateCounter();
+    reunordered_setNFAStateCounter();
     NFA emptyNFA = convertToNFA(convertToPostfix(""));
 
     assert(emptyNFA.initialState == 0);
@@ -77,14 +77,14 @@ void test_empty_nfa() {
     std::unordered_set<char> alphabet = {};
     assert(emptyNFA.alphabet == alphabet);
 
-    transition_function_t tf = emptyNFA.transitionFunction;
+    nfa_transition_function_t tf = emptyNFA.transitionFunction;
     
     std::unordered_set<int32_t> toStates = { 1 };
     assert((tf[{0, ' '}] == toStates));
 }
 
 void test_unit_nfa() {
-    resetStateCounter();
+    reunordered_setNFAStateCounter();
     NFA unitNFA = convertToNFA(convertToPostfix("a"));
 
     assert(unitNFA.initialState == 0);
@@ -93,14 +93,14 @@ void test_unit_nfa() {
     std::unordered_set<char> alphabet = { 'a' };
     assert(unitNFA.alphabet == alphabet);
 
-    transition_function_t tf = unitNFA.transitionFunction;
+    nfa_transition_function_t tf = unitNFA.transitionFunction;
     
     std::unordered_set<int32_t> toStates = { 1 };
     assert((tf[{0, 'a'}] == toStates));
 }
 
 void test_union_nfa() {
-    resetStateCounter();
+    reunordered_setNFAStateCounter();
     NFA union_nfa = convertToNFA(convertToPostfix("a+b"));
 
     assert(union_nfa.initialState == 4);
@@ -109,7 +109,7 @@ void test_union_nfa() {
     std::unordered_set<char> alphabet = {'a','b'};
     assert(union_nfa.alphabet == alphabet);
 
-    transition_function_t tf = union_nfa.transitionFunction;
+    nfa_transition_function_t tf = union_nfa.transitionFunction;
     
     std::unordered_set<int32_t> s1 = {1};
     assert((tf[{0, 'a'}] == s1));
@@ -123,7 +123,7 @@ void test_union_nfa() {
 }
 
 void test_concat_nfa() {
-    resetStateCounter();
+    reunordered_setNFAStateCounter();
     NFA concat_nfa = convertToNFA(convertToPostfix("ab"));
 
     assert(concat_nfa.initialState == 0);
@@ -132,7 +132,7 @@ void test_concat_nfa() {
     std::unordered_set<char> alphabet = {'a','b'};
     assert(concat_nfa.alphabet == alphabet);
 
-    transition_function_t tf = concat_nfa.transitionFunction;
+    nfa_transition_function_t tf = concat_nfa.transitionFunction;
     
     std::unordered_set<int32_t> s1 = {1};
     assert((tf[{0, 'a'}] == s1));
@@ -143,7 +143,7 @@ void test_concat_nfa() {
 }
 
 void test_kleene_star_nfa() {
-    resetStateCounter();
+    reunordered_setNFAStateCounter();
     NFA kleene_star_nfa = convertToNFA(convertToPostfix("a*"));
 
     assert(kleene_star_nfa.initialState == 2);
@@ -152,7 +152,7 @@ void test_kleene_star_nfa() {
     std::unordered_set<char> alphabet = {'a'};
     assert(kleene_star_nfa.alphabet == alphabet);
 
-    transition_function_t tf = kleene_star_nfa.transitionFunction;
+    nfa_transition_function_t tf = kleene_star_nfa.transitionFunction;
     
     std::unordered_set<int32_t> s1 = {1};
     assert((tf[{0, 'a'}] == s1));
