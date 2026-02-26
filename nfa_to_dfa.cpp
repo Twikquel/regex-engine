@@ -57,7 +57,7 @@ DFA convertToDFA(NFA nfa) {
     std::unordered_set<int32_t> dfaInitialState = getLambdaClosure(nfa, {nfa.initialState});
     std::unordered_map<std::unordered_set<int32_t>, int32_t, set_hasher> stateNameMap = {{dfaInitialState, dfa_state_counter++}};
     
-    std::unordered_set<int32_t> states = {};
+    std::unordered_set<int32_t> states = {stateNameMap[dfaInitialState]};
     std::unordered_set<int32_t> acceptingStates = {};
     dfa_transition_function_t transitionFunction = {};
     
