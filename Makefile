@@ -1,9 +1,9 @@
 all: build
 
-build: main.cpp postfixconverter.cpp postfixconverter.h
+build: main.cpp postfixconverter.cpp postfixconverter.h regex_to_nfa.cpp regex_to_nfa.h nfa_to_dfa.cpp nfa_to_dfa.h automatons.h
 	g++ -o main -Wall -Werror postfixconverter.cpp regex_to_nfa.cpp nfa_to_dfa.cpp main.cpp
 
-test: test.cpp postfixconverter.cpp postfixconverter.h
+test: test.cpp postfixconverter.cpp postfixconverter.h regex_to_nfa.cpp regex_to_nfa.h nfa_to_dfa.cpp nfa_to_dfa.h automatons.h
 	g++ -o test -Wall -Werror postfixconverter.cpp regex_to_nfa.cpp nfa_to_dfa.cpp test.cpp
 	./test
 

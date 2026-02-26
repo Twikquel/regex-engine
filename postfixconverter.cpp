@@ -8,95 +8,95 @@ bool isOperator(char symbol) {
     return symbol == '?' || symbol == '+' || symbol == '*';
 }
 
-bool higherEqualPrecedence(char op, char otherOp) {
+bool higherEqualPrecedence(char op, char other_op) {
     switch (op)
     {
     case '*':
         return true;
     case '?':
-        return otherOp == '?' || otherOp == '+';
+        return other_op == '?' || other_op == '+';
     case '+':
-        return otherOp == '+';
+        return other_op == '+';
     default:
         return false;
     }
 }
 
-std::queue<char> regexAsQueue(std::string regexStr) {
-    std::queue<char> regexQueue;
-    for(std::string::size_type i = 0; i < regexStr.size(); i++) {
-        char symbol = regexStr[i];
-        regexQueue.push(symbol);
+std::queue<char> regexAsQueue(std::string regex_str) {
+    std::queue<char> regex_queue;
+    for(std::string::size_type i = 0; i < regex_str.size(); i++) {
+        char symbol = regex_str[i];
+        regex_queue.push(symbol);
         
         //Add explicit concatenate operator
-        bool canConcatFirst = symbol != '(' && symbol != '+';
-        bool canConcatSecond = i < regexStr.size()-1 && regexStr[i+1] != ')' && regexStr[i+1] != '+' && regexStr[i+1] != '*';
-        if(canConcatFirst && canConcatSecond) {
-            regexQueue.push('?');
+        bool can_concat_first = symbol != '(' && symbol != '+';
+        bool can_concat_second = i < regex_str.size()-1 && regex_str[i+1] != ')' && regex_str[i+1] != '+' && regex_str[i+1] != '*';
+        if(can_concat_first && can_concat_second) {
+            regex_queue.push('?');
         }
     }
 
-    return regexQueue;
+    return regex_queue;
 }
 
-std::queue<char> convertToPostfix(std::string regexStr) {
-    std::queue<char> regexQueue = regexAsQueue(regexStr);
+std::queue<char> convertToPostfix(std::string regex_str) {
+    std::queue<char> regex_queue = regexAsQueue(regex_str);
     
     //Shunting-Yard algorithm
-    std::queue<char> postfixQueue;
-    std::stack<char> operatorStack;
+    std::queue<char> postfix_queue;
+    std::stack<char> operator_stack;
 
-    while (!regexQueue.empty()) {
-        char symbol = regexQueue.front();
-        regexQueue.pop();
+    while (!regex_queue.empty()) {
+        char symbol = regex_queue.front();
+        regex_queue.pop();
 
 
         if(isOperator(symbol)) {
-            if(operatorStack.empty() || operatorStack.top() == '(') {
-                operatorStack.push(symbol);
+            if(operator_stack.empty() || operator_stack.top() == '(') {
+                operator_stack.push(symbol);
             }
             else {
-                while(!operatorStack.empty()) {
-                    char op = operatorStack.top();
+                while(!operator_stack.empty()) {
+                    char op = operator_stack.top();
 
                     if(higherEqualPrecedence(op, symbol)) {
-                        postfixQueue.push(op);
-                        operatorStack.pop();
+                        postfix_queue.push(op);
+                        operator_stack.pop();
                     }
                     else {
                         break;
                     }
                 }
-                operatorStack.push(symbol);
+                operator_stack.push(symbol);
             }
         }
         else if(symbol == '(') {
-            operatorStack.push(symbol);
+            operator_stack.push(symbol);
         }
         else if(symbol == ')') {
-            bool openParFound = false;
-            while(!openParFound) {
-                char op = operatorStack.top();
-                operatorStack.pop();
+            bool open_parentheses_found = false;
+            while(!open_parentheses_found) {
+                char op = operator_stack.top();
+                operator_stack.pop();
 
                 if(op == '(') {
-                    openParFound = true;
+                    open_parentheses_found = true;
                 }
                 else {
-                    postfixQueue.push(op);
+                    postfix_queue.push(op);
                 }
             }
         }
         else {
-            postfixQueue.push(symbol);
+            postfix_queue.push(symbol);
         }
     }
-    while(!operatorStack.empty()) {
-        char op = operatorStack.top();
-        postfixQueue.push(op);
-        operatorStack.pop();
+    while(!operator_stack.empty()) {
+        char op = operator_stack.top();
+        postfix_queue.push(op);
+        operator_stack.pop();
     }
 
-    return postfixQueue;
+    return postfix_queue;
 }
 

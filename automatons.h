@@ -27,29 +27,29 @@ typedef std::unordered_map<state_input_pair, int32_t, hasher> dfa_transition_fun
 
 struct NFA {
     std::unordered_set<int32_t> states;
-    int32_t initialState;
-    int32_t acceptingState;
+    int32_t initial_state;
+    int32_t accepting_state;
     std::unordered_set<char> alphabet;
-    nfa_transition_function_t transitionFunction;
+    nfa_transition_function_t transition_function;
 };
 
 struct DFA {
     std::unordered_set<int32_t> states;
-    int32_t initialState;
-    std::unordered_set<int32_t> acceptingStates;
+    int32_t initial_state;
+    std::unordered_set<int32_t> accepting_states;
     std::unordered_set<char> alphabet;
-    dfa_transition_function_t transitionFunction;
+    dfa_transition_function_t transition_function;
 
     bool run(std::string word) {
-        int32_t currentState = initialState;
+        int32_t current_state = initial_state;
 
         for(char symbol : word) {
-            if(transitionFunction.count({currentState, symbol}) == 1) {
-                currentState = transitionFunction[{currentState, symbol}];
+            if(transition_function.count({current_state, symbol}) == 1) {
+                current_state = transition_function[{current_state, symbol}];
             }
             else return false;
         }
 
-        return acceptingStates.count(currentState) == 1;
+        return accepting_states.count(current_state) == 1;
     }
 };

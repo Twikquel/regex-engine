@@ -10,8 +10,8 @@ void printNFA(NFA nfa) {
     }
     std::cout << "}" << std::endl;
 
-    std::cout << "Initial State: " << nfa.initialState << std::endl;
-    std::cout << "Accepting State: " << nfa.acceptingState << std::endl;
+    std::cout << "Initial State: " << nfa.initial_state << std::endl;
+    std::cout << "Accepting State: " << nfa.accepting_state << std::endl;
 
     std::cout << "Alphabet: " << "{ ";
     for (const auto symbol : nfa.alphabet) {
@@ -20,7 +20,7 @@ void printNFA(NFA nfa) {
     std::cout << "}" << std::endl;
 
     std::cout << "Transition Function:" << std::endl;
-    for (const auto& [key, value] : nfa.transitionFunction) {
+    for (const auto& [key, value] : nfa.transition_function) {
         std::cout << "\t(" << key.state << ", " << key.input << ") --> { "; 
         for(int32_t i: value) {
             std::cout << i << " ";
@@ -37,9 +37,9 @@ void printDFA(DFA dfa) {
     }
     std::cout << "}" << std::endl;
 
-    std::cout << "Initial State: " << dfa.initialState << std::endl;
+    std::cout << "Initial State: " << dfa.initial_state << std::endl;
     std::cout << "Accepting States: { ";
-    for(int32_t state : dfa.acceptingStates) {
+    for(int32_t state : dfa.accepting_states) {
         std::cout << state << " "; 
     }
     std:: cout << "}" << std::endl;
@@ -51,7 +51,7 @@ void printDFA(DFA dfa) {
     std::cout << "}" << std::endl;
 
     std::cout << "Transition Function:" << std::endl;
-    for (const auto& [key, value] : dfa.transitionFunction) {
+    for (const auto& [key, value] : dfa.transition_function) {
         std::cout << "\t(" << key.state << ", " << key.input << ") --> " << value << std::endl; 
     }
     std::cout << std::endl;
@@ -64,9 +64,9 @@ DFA createDFA(std::string regex) {
 int main(int32_t argc, char *argv[]) {
     std::cout << "Regex: " << argv[1] << std::endl << std::endl;
 
-    std::queue<char> postfixRegex = convertToPostfix(argv[1]);
+    std::queue<char> postfix_regex = convertToPostfix(argv[1]);
 
-    NFA nfa = convertToNFA(postfixRegex);
+    NFA nfa = convertToNFA(postfix_regex);
     DFA dfa = convertToDFA(nfa);
 
     std::cout << "NFA: " << std::endl;

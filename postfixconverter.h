@@ -5,8 +5,8 @@
 
 bool isOperator(char symbol);
 
-bool higherEqualPrecedence(char op, char otherOp);
+bool higherEqualPrecedence(char op, char other_op);
 
-std::queue<char> regexAsQueue(std::string regexStr);
+std::queue<char> regexAsQueue(std::string regex_str);
 
-std::queue<char> convertToPostfix(std::string regexStr);
+std::queue<char> convertToPostfix(std::string regex_str);

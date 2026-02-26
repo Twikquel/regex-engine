@@ -3,7 +3,7 @@
 #include <queue>
 #include "automatons.h"
 
-void reunordered_setNFAStateCounter();
+void resetNFAStateCounter();
 
 NFA convertToNFA(std::queue<char> regex);
 
