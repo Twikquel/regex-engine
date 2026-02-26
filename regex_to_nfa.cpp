@@ -71,28 +71,35 @@ NFA convertToNFA(std::queue<char> regexQueue) {
 NFA createUnitNFA(char symbol) {
     int32_t initialState = nfa_state_counter++;
     int32_t acceptingState = nfa_state_counter++;
+    std::unordered_set<int32_t> states = {initialState, acceptingState};
     std::unordered_set<char> alphabet = {symbol};
 
     state_input_pair transitionInput = {initialState, symbol};
     nfa_transition_function_t transitionFunction = {{transitionInput, {acceptingState}}};
 
-    return {initialState, acceptingState, alphabet, transitionFunction};
+    return {states, initialState, acceptingState, alphabet, transitionFunction};
 }
 
 NFA createEmptyNFA() {
     int32_t initialState = nfa_state_counter++;
     int32_t acceptingState = nfa_state_counter++;
+    std::unordered_set<int32_t> states = {initialState, acceptingState};
     std::unordered_set<char> alphabet = {};
 
     state_input_pair transitionInput = {initialState, ' '};
     nfa_transition_function_t transitionFunction = {{transitionInput, {acceptingState}}};
 
-    return {initialState, acceptingState, alphabet, transitionFunction};
+    return {states, initialState, acceptingState, alphabet, transitionFunction};
 }
 
  NFA unionNFA(NFA nfa1, NFA nfa2) {
     int32_t initialState = nfa_state_counter++;
     int32_t acceptingState = nfa_state_counter++;
+    
+    std::unordered_set<int32_t> states = nfa1.states;
+    states.merge(nfa2.states);
+    states.insert(initialState);
+    states.insert(acceptingState);
 
     std::unordered_set<char> alphabet = nfa1.alphabet;
     alphabet.merge(nfa2.alphabet);
@@ -108,12 +115,17 @@ NFA createEmptyNFA() {
     transitionFunction[{state: nfa1.acceptingState, input: ' '}] = {acceptingState};
     transitionFunction[{state: nfa2.acceptingState, input: ' '}] = {acceptingState};
 
-    return {initialState, acceptingState, alphabet, transitionFunction};
+    return {states, initialState, acceptingState, alphabet, transitionFunction};
 }
 
 NFA concatNFA(NFA nfa1, NFA nfa2) {
     int32_t initialState = nfa1.initialState;
     int32_t acceptingState = nfa2.acceptingState;
+
+    std::unordered_set<int32_t> states = nfa1.states;
+    states.merge(nfa2.states);
+    states.insert(initialState);
+    states.insert(acceptingState);
 
     std::unordered_set<char> alphabet = nfa1.alphabet;
     alphabet.merge(nfa2.alphabet);
@@ -125,18 +137,23 @@ NFA concatNFA(NFA nfa1, NFA nfa2) {
     //Add lambda transition from accepting state of nfa1 to initial state of nfa2
     transitionFunction[{state: nfa1.acceptingState, input: ' '}] = {nfa2.initialState};
 
-    return {initialState, acceptingState, alphabet, transitionFunction};
+    return {states, initialState, acceptingState, alphabet, transitionFunction};
 }
 
 
 NFA kleeneStarNFA(NFA nfa) {
     int32_t initialState = nfa_state_counter++;
     int32_t acceptingState = nfa_state_counter++;
+
+    std::unordered_set<int32_t> states = nfa.states;
+    states.insert(initialState);
+    states.insert(acceptingState);
+
     std::unordered_set<char> alphabet = nfa.alphabet;
     nfa_transition_function_t transitionFunction = nfa.transitionFunction;
 
     transitionFunction[{state: initialState, input: ' '}] = {nfa.initialState, acceptingState};
     transitionFunction[{state: nfa.acceptingState, input: ' '}] = {nfa.initialState, acceptingState};
 
-    return {initialState, acceptingState, alphabet, transitionFunction};
+    return {states, initialState, acceptingState, alphabet, transitionFunction};
 }

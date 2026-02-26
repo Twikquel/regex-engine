@@ -57,6 +57,7 @@ DFA convertToDFA(NFA nfa) {
     std::unordered_set<int32_t> dfaInitialState = getLambdaClosure(nfa, {nfa.initialState});
     std::unordered_map<std::unordered_set<int32_t>, int32_t, set_hasher> stateNameMap = {{dfaInitialState, dfa_state_counter++}};
     
+    std::unordered_set<int32_t> states = {};
     std::unordered_set<int32_t> acceptingStates = {};
     dfa_transition_function_t transitionFunction = {};
     
@@ -64,26 +65,27 @@ DFA convertToDFA(NFA nfa) {
     unprocessed_states.push(dfaInitialState);
 
     while(!unprocessed_states.empty()) {
-        std::unordered_set<int32_t> states = unprocessed_states.top();
+        std::unordered_set<int32_t> unprocessed_state = unprocessed_states.top();
         unprocessed_states.pop();
 
-        if(states.count(nfa.acceptingState) == 1) {
-            acceptingStates.insert(stateNameMap[states]);
+        if(unprocessed_state.count(nfa.acceptingState) == 1) {
+            acceptingStates.insert(stateNameMap[unprocessed_state]);
         }
 
         for(char symbol : nfa.alphabet) {
-            std::unordered_set<int32_t> reachableStates = getReachableStates(nfa, states, symbol);
+            std::unordered_set<int32_t> reachableStates = getReachableStates(nfa, unprocessed_state, symbol);
             
             if(!reachableStates.empty()) {
                 if(stateNameMap.count(reachableStates) == 0) {
                     stateNameMap[reachableStates] = dfa_state_counter++;
+                    states.insert(stateNameMap[reachableStates]);
                     unprocessed_states.push(reachableStates);
                 }
 
-                transitionFunction[{stateNameMap[states], symbol}] = stateNameMap[reachableStates];
+                transitionFunction[{stateNameMap[unprocessed_state], symbol}] = stateNameMap[reachableStates];
             }
         }
     }
 
-    return {stateNameMap[dfaInitialState], acceptingStates, nfa.alphabet, transitionFunction};
+    return {states, stateNameMap[dfaInitialState], acceptingStates, nfa.alphabet, transitionFunction};
 }

@@ -26,6 +26,7 @@ typedef std::unordered_map<state_input_pair, std::unordered_set<int32_t>, hasher
 typedef std::unordered_map<state_input_pair, int32_t, hasher> dfa_transition_function_t;
 
 struct NFA {
+    std::unordered_set<int32_t> states;
     int32_t initialState;
     int32_t acceptingState;
     std::unordered_set<char> alphabet;
@@ -33,6 +34,7 @@ struct NFA {
 };
 
 struct DFA {
+    std::unordered_set<int32_t> states;
     int32_t initialState;
     std::unordered_set<int32_t> acceptingStates;
     std::unordered_set<char> alphabet;

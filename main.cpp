@@ -4,6 +4,12 @@
 #include "nfa_to_dfa.h"
 
 void printNFA(NFA nfa) {
+    std::cout << "States: " << "{ ";
+    for (const auto state : nfa.states) {
+        std::cout << state << " "; 
+    }
+    std::cout << "}" << std::endl;
+
     std::cout << "Initial State: " << nfa.initialState << std::endl;
     std::cout << "Accepting State: " << nfa.acceptingState << std::endl;
 
@@ -25,6 +31,12 @@ void printNFA(NFA nfa) {
 }
 
 void printDFA(DFA dfa) {
+    std::cout << "States: " << "{ ";
+    for (const auto state : dfa.states) {
+        std::cout << state << " "; 
+    }
+    std::cout << "}" << std::endl;
+
     std::cout << "Initial State: " << dfa.initialState << std::endl;
     std::cout << "Accepting States: { ";
     for(int32_t state : dfa.acceptingStates) {
@@ -45,21 +57,22 @@ void printDFA(DFA dfa) {
     std::cout << std::endl;
 }
 
+DFA createDFA(std::string regex) {
+    return convertToDFA(convertToNFA(convertToPostfix(regex)));
+}
+
 int main(int32_t argc, char *argv[]) {
-    std::cout << "Regex: " << argv[1] << std::endl;
+    std::cout << "Regex: " << argv[1] << std::endl << std::endl;
 
     std::queue<char> postfixRegex = convertToPostfix(argv[1]);
 
     NFA nfa = convertToNFA(postfixRegex);
     DFA dfa = convertToDFA(nfa);
 
+    std::cout << "NFA: " << std::endl;
     printNFA(nfa);
+    std::cout << "DFA: " << std::endl;
     printDFA(dfa);
-
-    std::cout << dfa.run("a") << std::endl;
-    std::cout << dfa.run("aaaa") << std::endl;
-    std::cout << dfa.run("aaaaab") << std::endl;
-    std::cout << dfa.run("c") << std::endl;
 
     return 0;
 }
