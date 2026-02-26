@@ -2,6 +2,8 @@
 #include <cassert>
 #include "postfixconverter.h"
 #include "regex_to_nfa.h"
+#include "nfa_to_dfa.h"
+
 
 std::string queueToString(std::queue<char> queue) {
     std::string str = "";
@@ -13,6 +15,10 @@ std::string queueToString(std::queue<char> queue) {
     }
 
     return str;
+}
+
+DFA createDFA(std::string regex) {
+    return convertToDFA(convertToNFA(convertToPostfix(regex)));
 }
 
 void test_precedence() {
@@ -69,15 +75,18 @@ void test_postfix_conversion() {
 
 void test_empty_nfa() {
     reunordered_setNFAStateCounter();
-    NFA emptyNFA = convertToNFA(convertToPostfix(""));
+    NFA empty_nfa = convertToNFA(convertToPostfix(""));
 
-    assert(emptyNFA.initialState == 0);
-    assert(emptyNFA.acceptingState == 1);
+    assert(empty_nfa.initialState == 0);
+    assert(empty_nfa.acceptingState == 1);
+
+    std::unordered_set<int32_t> states = {0,1};
+    assert(empty_nfa.states == states);
 
     std::unordered_set<char> alphabet = {};
-    assert(emptyNFA.alphabet == alphabet);
+    assert(empty_nfa.alphabet == alphabet);
 
-    nfa_transition_function_t tf = emptyNFA.transitionFunction;
+    nfa_transition_function_t tf = empty_nfa.transitionFunction;
     
     std::unordered_set<int32_t> toStates = { 1 };
     assert((tf[{0, ' '}] == toStates));
@@ -85,15 +94,18 @@ void test_empty_nfa() {
 
 void test_unit_nfa() {
     reunordered_setNFAStateCounter();
-    NFA unitNFA = convertToNFA(convertToPostfix("a"));
+    NFA unit_nfa = convertToNFA(convertToPostfix("a"));
 
-    assert(unitNFA.initialState == 0);
-    assert(unitNFA.acceptingState == 1);
+    assert(unit_nfa.initialState == 0);
+    assert(unit_nfa.acceptingState == 1);
+
+    std::unordered_set<int32_t> states = {0,1};
+    assert(unit_nfa.states == states);
 
     std::unordered_set<char> alphabet = { 'a' };
-    assert(unitNFA.alphabet == alphabet);
+    assert(unit_nfa.alphabet == alphabet);
 
-    nfa_transition_function_t tf = unitNFA.transitionFunction;
+    nfa_transition_function_t tf = unit_nfa.transitionFunction;
     
     std::unordered_set<int32_t> toStates = { 1 };
     assert((tf[{0, 'a'}] == toStates));
@@ -105,6 +117,9 @@ void test_union_nfa() {
 
     assert(union_nfa.initialState == 4);
     assert(union_nfa.acceptingState == 5);
+
+    std::unordered_set<int32_t> states = {0,1,2,3,4,5};
+    assert(union_nfa.states == states);
 
     std::unordered_set<char> alphabet = {'a','b'};
     assert(union_nfa.alphabet == alphabet);
@@ -129,6 +144,9 @@ void test_concat_nfa() {
     assert(concat_nfa.initialState == 0);
     assert(concat_nfa.acceptingState == 3);
 
+    std::unordered_set<int32_t> states = {0,1,2,3};
+    assert(concat_nfa.states == states);
+
     std::unordered_set<char> alphabet = {'a','b'};
     assert(concat_nfa.alphabet == alphabet);
 
@@ -149,6 +167,9 @@ void test_kleene_star_nfa() {
     assert(kleene_star_nfa.initialState == 2);
     assert(kleene_star_nfa.acceptingState == 3);
 
+    std::unordered_set<int32_t> states = {0,1,2,3};
+    assert(kleene_star_nfa.states == states);
+
     std::unordered_set<char> alphabet = {'a'};
     assert(kleene_star_nfa.alphabet == alphabet);
 
@@ -161,6 +182,53 @@ void test_kleene_star_nfa() {
     assert((tf[{2, ' '}] == s03));
 }
 
+void test_dfa() {
+    DFA empty_dfa = createDFA("");
+    assert(empty_dfa.run(""));
+
+    assert(!empty_dfa.run("a"));
+
+
+    DFA unit_dfa = createDFA("a");
+    assert(unit_dfa.run("a"));
+
+    assert(!unit_dfa.run(""));
+    assert(!unit_dfa.run("b"));
+
+
+    DFA union_dfa = createDFA("a+b");
+    assert(union_dfa.run("a"));
+    assert(union_dfa.run("b"));
+
+    assert(!union_dfa.run(""));
+    assert(!union_dfa.run("c"));
+    assert(!union_dfa.run("aa"));
+    assert(!union_dfa.run("bb"));
+    assert(!union_dfa.run("ab"));
+    assert(!union_dfa.run("ba"));
+
+
+    DFA concat_dfa = createDFA("ab");
+    assert(concat_dfa.run("ab"));
+
+    assert(!concat_dfa.run(""));
+    assert(!concat_dfa.run("a"));
+    assert(!concat_dfa.run("b"));
+    assert(!concat_dfa.run("c"));
+    assert(!concat_dfa.run("aba"));
+    assert(!concat_dfa.run("abb"));
+
+    DFA kleene_star_dfa = createDFA("a*");
+    assert(kleene_star_dfa.run(""));
+    assert(kleene_star_dfa.run("a"));
+    assert(kleene_star_dfa.run("aa"));
+    assert(kleene_star_dfa.run("aaaaaaaaaaa"));
+
+    assert(!kleene_star_dfa.run("b"));
+    assert(!kleene_star_dfa.run("baaaaaaaaa"));
+    assert(!kleene_star_dfa.run("aaaabaaaaa"));
+    assert(!kleene_star_dfa.run("aaaaaaab"));
+}
 
 int main() {
     test_precedence();
@@ -173,6 +241,7 @@ int main() {
     test_concat_nfa();
     test_kleene_star_nfa();
 
+    test_dfa();
 
     std::cout << "All tests passed" << std::endl;
 } 
