@@ -2,4 +2,4 @@
 
 #include "automatons.h"
 
-DFA convertToDFA(NFA nfa);
+DFA minimizeDFA(DFA dfa);

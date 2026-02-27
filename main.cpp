@@ -2,6 +2,7 @@
 #include "postfixconverter.h"
 #include "regex_to_nfa.h"
 #include "nfa_to_dfa.h"
+#include "minimize_dfa.h"
 
 void printNFA(NFA nfa) {
     std::cout << "States: " << "{ ";
@@ -58,7 +59,7 @@ void printDFA(DFA dfa) {
 }
 
 DFA createDFA(std::string regex) {
-    return convertToDFA(convertToNFA(convertToPostfix(regex)));
+    return minimizeDFA(convertToDFA(convertToNFA(convertToPostfix(regex))));
 }
 
 int main(int32_t argc, char *argv[]) {
@@ -68,11 +69,14 @@ int main(int32_t argc, char *argv[]) {
 
     NFA nfa = convertToNFA(postfix_regex);
     DFA dfa = convertToDFA(nfa);
+    DFA min_dfa = minimizeDFA(dfa);
 
     std::cout << "NFA: " << std::endl;
     printNFA(nfa);
     std::cout << "DFA: " << std::endl;
     printDFA(dfa);
+    std::cout << "Minimal DFA: " << std::endl;
+    printDFA(min_dfa);
 
     return 0;
 }
