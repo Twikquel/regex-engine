@@ -92,20 +92,26 @@ NFA createEmptyNFA() {
     return {states, initial_state, accepting_state, alphabet, transition_function};
 }
 
- NFA unionNFA(NFA nfa1, NFA nfa2) {
+ NFA unionNFA(const NFA& nfa1, const NFA& nfa2) {
     int32_t initial_state = nfa_state_counter++;
     int32_t accepting_state = nfa_state_counter++;
     
     std::unordered_set<int32_t> states = nfa1.states;
-    states.merge(nfa2.states);
+    for(int32_t state : nfa2.states) {
+        states.insert(state);
+    }
     states.insert(initial_state);
     states.insert(accepting_state);
 
     std::unordered_set<char> alphabet = nfa1.alphabet;
-    alphabet.merge(nfa2.alphabet);
+    for(char symbol : nfa2.alphabet) {
+        alphabet.insert(symbol);
+    }
 
     nfa_transition_function_t transition_function = nfa1.transition_function;
-    transition_function.merge(nfa2.transition_function);
+    for(const auto& [key, value] : nfa2.transition_function) {
+        transition_function[key] = value;
+    }
     
     //Add lambda transitions to initial state of nfa1 and nfa2
     transition_function[{state: initial_state, input: ' '}] = {nfa1.initial_state, nfa2.initial_state};
@@ -117,20 +123,26 @@ NFA createEmptyNFA() {
     return {states, initial_state, accepting_state, alphabet, transition_function};
 }
 
-NFA concatNFA(NFA nfa1, NFA nfa2) {
+NFA concatNFA(const NFA& nfa1, const NFA& nfa2) {
     int32_t initial_state = nfa1.initial_state;
     int32_t accepting_state = nfa2.accepting_state;
 
     std::unordered_set<int32_t> states = nfa1.states;
-    states.merge(nfa2.states);
+    for(int32_t state : nfa2.states) {
+        states.insert(state);
+    }
     states.insert(initial_state);
     states.insert(accepting_state);
 
     std::unordered_set<char> alphabet = nfa1.alphabet;
-    alphabet.merge(nfa2.alphabet);
+    for(char symbol : nfa2.alphabet) {
+        alphabet.insert(symbol);
+    }
 
     nfa_transition_function_t transition_function = nfa1.transition_function;
-    transition_function.merge(nfa2.transition_function);
+    for(const auto& [key, value] : nfa2.transition_function) {
+        transition_function[key] = value;
+    }
 
     //Add lambda transition from accepting state of nfa1 to initial state of nfa2
     transition_function[{state: nfa1.accepting_state, input: ' '}] = {nfa2.initial_state};
@@ -139,7 +151,7 @@ NFA concatNFA(NFA nfa1, NFA nfa2) {
 }
 
 
-NFA kleeneStarNFA(NFA nfa) {
+NFA kleeneStarNFA(const NFA& nfa) {
     int32_t initial_state = nfa_state_counter++;
     int32_t accepting_state = nfa_state_counter++;
 

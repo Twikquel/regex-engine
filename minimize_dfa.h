@@ -2,4 +2,4 @@
 
 #include "automatons.h"
 
-DFA minimizeDFA(DFA dfa);
+DFA minimizeDFA(const DFA& dfa);

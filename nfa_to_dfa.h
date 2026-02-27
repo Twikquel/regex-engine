@@ -2,4 +2,4 @@
 
 #include "automatons.h"
 
-DFA convertToDFA(NFA nfa);
+DFA convertToDFA(const NFA& nfa);

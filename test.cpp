@@ -18,7 +18,8 @@ std::string queueToString(std::queue<char> queue) {
 }
 
 DFA createDFA(std::string regex) {
-    return convertToDFA(convertToNFA(convertToPostfix(regex)));
+    NFA nfa = convertToNFA(convertToPostfix(regex));
+    return convertToDFA(nfa);
 }
 
 void test_precedence() {

@@ -59,7 +59,9 @@ void printDFA(DFA dfa) {
 }
 
 DFA createDFA(std::string regex) {
-    return minimizeDFA(convertToDFA(convertToNFA(convertToPostfix(regex))));
+    NFA nfa = convertToNFA(convertToPostfix(regex));
+    DFA dfa = convertToDFA(nfa);
+    return minimizeDFA(dfa);
 }
 
 int main(int32_t argc, char *argv[]) {

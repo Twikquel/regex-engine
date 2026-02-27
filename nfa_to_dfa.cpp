@@ -16,7 +16,7 @@ struct set_hasher {
     }
 };
 
-std::unordered_set<int32_t> getLambdaClosure(NFA nfa, std::unordered_set<int32_t> states) {
+std::unordered_set<int32_t> getLambdaClosure(const NFA& nfa, const std::unordered_set<int32_t>& states) {
     std::unordered_set<int32_t> closure = states;
 
     std::stack<int32_t> states_to_check;
@@ -28,11 +28,13 @@ std::unordered_set<int32_t> getLambdaClosure(NFA nfa, std::unordered_set<int32_t
         int32_t nextState = states_to_check.top();
         states_to_check.pop();
 
-        std::unordered_set<int32_t> to_states = nfa.transition_function[{nextState, ' '}];
-        for(int32_t to_state : to_states) {
-            if(closure.count(to_state) == 0) {
-                states_to_check.push(to_state);
-                closure.insert(to_state);
+        if(nfa.transition_function.count({nextState, ' '}) == 1) {
+            std::unordered_set<int32_t> to_states = nfa.transition_function.at({nextState, ' '});
+            for(int32_t to_state : to_states) {
+                if(closure.count(to_state) == 0) {
+                    states_to_check.push(to_state);
+                    closure.insert(to_state);
+                }
             }
         }
     }
@@ -40,19 +42,21 @@ std::unordered_set<int32_t> getLambdaClosure(NFA nfa, std::unordered_set<int32_t
     return closure;
 }
 
-std::unordered_set<int32_t> getReachableStates(NFA nfa, std::unordered_set<int32_t> states, char symbol) {
+std::unordered_set<int32_t> getReachableStates(const NFA& nfa, const std::unordered_set<int32_t>& states, char symbol) {
     std::unordered_set<int32_t> one_step_reachable = {};
 
     for(int32_t from_state : states) {
-        for(int32_t to_state : nfa.transition_function[{from_state, symbol}]) {
-            one_step_reachable.insert(to_state);
+        if(nfa.transition_function.count({from_state, symbol}) == 1) {
+            for(int32_t to_state : nfa.transition_function.at({from_state, symbol})) {
+                one_step_reachable.insert(to_state);
+            }
         }
     }
 
     return getLambdaClosure(nfa, one_step_reachable);
 }
 
-DFA convertToDFA(NFA nfa) {
+DFA convertToDFA(const NFA& nfa) {
     int32_t dfa_state_counter = 0;
     std::unordered_set<int32_t> dfa_initial_state = getLambdaClosure(nfa, {nfa.initial_state});
     std::unordered_map<std::unordered_set<int32_t>, int32_t, set_hasher> state_name_map = {{dfa_initial_state, dfa_state_counter++}};
