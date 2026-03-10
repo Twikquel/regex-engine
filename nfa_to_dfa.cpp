@@ -56,6 +56,38 @@ std::unordered_set<int32_t> getReachableStates(const NFA& nfa, const std::unorde
     return getLambdaClosure(nfa, one_step_reachable);
 }
 
+DFA completeDFA(const DFA& dfa) {
+    DFA complete_dfa = dfa;
+
+    int32_t max_state = 0;
+    for(int32_t state : complete_dfa.states) {
+        if(max_state < state) {
+            max_state = state;
+        }
+    }
+    
+    int32_t trap_state = max_state + 1;
+
+    bool need_trap_state = false;
+    for(int32_t state : complete_dfa.states) {
+        for(char symbol : complete_dfa.alphabet) {
+            if(complete_dfa.transition_function.count({state, symbol}) == 0) {
+                complete_dfa.transition_function[{state, symbol}] = trap_state;
+                need_trap_state = true;
+            }
+        }
+    }
+
+    if(need_trap_state) {
+        complete_dfa.states.insert(trap_state);
+        for(char symbol : complete_dfa.alphabet) {
+            complete_dfa.transition_function[{trap_state, symbol}] = trap_state;
+        }
+    }
+
+    return complete_dfa;
+}
+
 DFA convertToDFA(const NFA& nfa) {
     int32_t dfa_state_counter = 0;
     std::unordered_set<int32_t> dfa_initial_state = getLambdaClosure(nfa, {nfa.initial_state});
@@ -91,5 +123,7 @@ DFA convertToDFA(const NFA& nfa) {
         }
     }
 
-    return {states, state_name_map[dfa_initial_state], accepting_states, nfa.alphabet, transition_function};
+    DFA dfa = {states, state_name_map[dfa_initial_state], accepting_states, nfa.alphabet, transition_function};
+
+    return completeDFA(dfa);
 }

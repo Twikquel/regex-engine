@@ -1,4 +1,6 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "postfixconverter.h"
 #include "regex_to_nfa.h"
 #include "nfa_to_dfa.h"
@@ -64,10 +66,16 @@ DFA createDFA(std::string regex) {
     return minimizeDFA(dfa);
 }
 
-int main(int32_t argc, char *argv[]) {
-    std::cout << "Regex: " << argv[1] << std::endl << std::endl;
+int main(int argc, char **argv) {
 
-    std::queue<char> postfix_regex = convertToPostfix(argv[1]);
+    std::string regex;
+    std::cout << "Please provide a Regular Expression: ";
+    getline(std::cin, regex);
+    std::cout << "Constructing Finite Automaton for the regular expression: " << regex << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::cout << std::endl;
+
+    std::queue<char> postfix_regex = convertToPostfix(regex);
 
     NFA nfa = convertToNFA(postfix_regex);
     DFA dfa = convertToDFA(nfa);
@@ -79,6 +87,25 @@ int main(int32_t argc, char *argv[]) {
     printDFA(dfa);
     std::cout << "Minimal DFA: " << std::endl;
     printDFA(min_dfa);
+    std::cout << std::endl;
+
+    std::string word;
+    while(true) {
+        std::cout << "Input: ";
+        getline(std::cin, word);
+
+        bool accepted = min_dfa.run(word);
+
+        if(accepted) {
+            std::cout << "Result: True" << std::endl;
+            std::cout << "[" << word << "] is in the language of Regular Expression [" << regex << "]" << std::endl; 
+        }
+        else {
+            std::cout << "Result: False" << std::endl;
+            std::cout << "[" << word << "] is not in the language of Regular Expression [" << regex << "]" << std::endl;
+        }
+        std::cout << std:: endl;
+    }
 
     return 0;
 }
