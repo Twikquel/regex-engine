@@ -1,8 +1,6 @@
 # VS Code
 .vscode
-out/
-main
-test
+bin/
 
 # Prerequisites
 *.d

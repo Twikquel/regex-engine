@@ -1,12 +1,31 @@
-all: build
+CXX 		:= g++
+CXX_FLAGS	:= -ggdb
 
-build: main.cpp postfixconverter.cpp postfixconverter.h regex_to_nfa.cpp regex_to_nfa.h nfa_to_dfa.cpp nfa_to_dfa.h minimize_dfa.cpp minimize_dfa.h automatons.h
-	g++ -o main -Wall -Werror postfixconverter.cpp regex_to_nfa.cpp nfa_to_dfa.cpp minimize_dfa.cpp main.cpp
+BIN 		:= bin
+SRC			:= src
+SRC_MAIN 	:= src/main
+SRC_TEST	:= src/test
+INCLUDE		:= include
 
-test: test.cpp postfixconverter.cpp postfixconverter.h regex_to_nfa.cpp regex_to_nfa.h nfa_to_dfa.cpp nfa_to_dfa.h minimize_dfa.cpp minimize_dfa.h automatons.h
-	g++ -o test -Wall -Werror postfixconverter.cpp regex_to_nfa.cpp nfa_to_dfa.cpp minimize_dfa.cpp test.cpp
-	./test
+LIBRARIES 	:= 
+EXECUTABLE 	:= main
+TEST		:= test
+
+all: $(BIN)/$(EXECUTABLE)
+
+run: clean all
+	clear
+	./$(BIN)/$(EXECUTABLE)
+
+$(BIN)/$(EXECUTABLE): $(SRC)/main.cpp $(SRC_MAIN)/*.cpp
+	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) $^ -o $@ $(LIBRARIES)
+
+test: clean $(BIN)/$(TEST)
+	clear
+	./$(BIN)/$(TEST)
+
+$(BIN)/$(TEST): $(SRC)/test.cpp $(SRC_MAIN)/*.cpp
+	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) $^ -o $@ $(LIBRARIES)	
 
 clean:
-	rm -f main
-	rm -f test
+	-rm -f $(BIN)/*
