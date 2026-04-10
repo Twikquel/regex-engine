@@ -18,6 +18,7 @@ run: clean all
 	./$(BIN)/$(EXECUTABLE)
 
 $(BIN)/$(EXECUTABLE): $(SRC)/main.cpp $(SRC_MAIN)/*.cpp
+	mkdir -p $(BIN)
 	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) $^ -o $@ $(LIBRARIES)
 
 test: clean $(BIN)/$(TEST)
@@ -25,6 +26,7 @@ test: clean $(BIN)/$(TEST)
 	./$(BIN)/$(TEST)
 
 $(BIN)/$(TEST): $(SRC)/test.cpp $(SRC_MAIN)/*.cpp
+	mkdir -p $(BIN)
 	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) $^ -o $@ $(LIBRARIES)	
 
 clean:
