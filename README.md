@@ -14,6 +14,6 @@ make test
 
 To run a simple interactive interface use:
 ```bash
-./main
+make run
 ```
 
