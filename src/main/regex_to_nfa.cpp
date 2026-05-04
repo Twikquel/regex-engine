@@ -1,4 +1,3 @@
-#include <queue>
 #include <stack>
 
 #include "automatons.h"
@@ -92,8 +91,39 @@ NFA createEmptyNFA() {
     return {states, initial_state, accepting_state, alphabet, transition_function};
 }
 
- NFA unionNFA(const NFA& nfa1, const NFA& nfa2) {
+NFA unionNFA(const std::list<NFA>& nfas) {
     int32_t initial_state = nfa_state_counter++;
+    int32_t accepting_state = nfa_state_counter++;
+
+    std::unordered_set<int32_t> states = {initial_state, accepting_state};
+    std::unordered_set<char> alphabet = {};
+    nfa_transition_function_t transition_function = {};
+
+    std::unordered_set<int32_t> old_initial_states = {};
+
+    for(NFA nfa : nfas) {
+        states.merge(nfa.states);
+        alphabet.merge(nfa.alphabet);
+        transition_function.merge(nfa.transition_function);
+
+        old_initial_states.insert(nfa.initial_state);
+
+        //Add lambda transitions from old accepting states of nfa to new accepting state
+        transition_function[{nfa.accepting_state, ' '}] = {accepting_state};
+    }
+
+    //Add lambda transitions to fron new initial state to old initial states of nfas
+    transition_function[{state: initial_state, input: ' '}] = old_initial_states;
+
+    return {states, initial_state, accepting_state, alphabet, transition_function};
+}
+
+NFA unionNFA(const NFA& nfa1, const NFA& nfa2) {
+
+    std::list<NFA> nfas = {nfa1, nfa2};
+
+    return unionNFA(nfas);
+    /*int32_t initial_state = nfa_state_counter++;
     int32_t accepting_state = nfa_state_counter++;
     
     std::unordered_set<int32_t> states = nfa1.states;
@@ -120,7 +150,7 @@ NFA createEmptyNFA() {
     transition_function[{state: nfa1.accepting_state, input: ' '}] = {accepting_state};
     transition_function[{state: nfa2.accepting_state, input: ' '}] = {accepting_state};
 
-    return {states, initial_state, accepting_state, alphabet, transition_function};
+    return {states, initial_state, accepting_state, alphabet, transition_function};*/
 }
 
 NFA concatNFA(const NFA& nfa1, const NFA& nfa2) {
