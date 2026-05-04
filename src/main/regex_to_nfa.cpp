@@ -119,38 +119,8 @@ NFA unionNFA(const std::list<NFA>& nfas) {
 }
 
 NFA unionNFA(const NFA& nfa1, const NFA& nfa2) {
-
     std::list<NFA> nfas = {nfa1, nfa2};
-
     return unionNFA(nfas);
-    /*int32_t initial_state = nfa_state_counter++;
-    int32_t accepting_state = nfa_state_counter++;
-    
-    std::unordered_set<int32_t> states = nfa1.states;
-    for(int32_t state : nfa2.states) {
-        states.insert(state);
-    }
-    states.insert(initial_state);
-    states.insert(accepting_state);
-
-    std::unordered_set<char> alphabet = nfa1.alphabet;
-    for(char symbol : nfa2.alphabet) {
-        alphabet.insert(symbol);
-    }
-
-    nfa_transition_function_t transition_function = nfa1.transition_function;
-    for(const auto& [key, value] : nfa2.transition_function) {
-        transition_function[key] = value;
-    }
-    
-    //Add lambda transitions to initial state of nfa1 and nfa2
-    transition_function[{state: initial_state, input: ' '}] = {nfa1.initial_state, nfa2.initial_state};
-
-    //Add lambda transitions from accepting states of nfa1 and nfa2 to new accepting state
-    transition_function[{state: nfa1.accepting_state, input: ' '}] = {accepting_state};
-    transition_function[{state: nfa2.accepting_state, input: ' '}] = {accepting_state};
-
-    return {states, initial_state, accepting_state, alphabet, transition_function};*/
 }
 
 NFA concatNFA(const NFA& nfa1, const NFA& nfa2) {
@@ -179,7 +149,6 @@ NFA concatNFA(const NFA& nfa1, const NFA& nfa2) {
 
     return {states, initial_state, accepting_state, alphabet, transition_function};
 }
-
 
 NFA kleeneStarNFA(const NFA& nfa) {
     int32_t initial_state = nfa_state_counter++;
